@@ -1,0 +1,47 @@
+---
+- name: playbook_zsh.yml - zsh and zim setup
+  hosts: localhost
+
+  tasks:
+    - name: install base zsh and curl
+      become: yes
+      pacman:
+        update_cache: yes
+        name:
+          - zsh
+          - curl
+
+
+    - name: check if .bash_history exists
+      stat:
+        path: "~/.bash_history"
+      register: stat_chech_result
+
+    - name: add content from .bash_history to .zhistory
+      shell: strings -eS ~/.bash_history >> ~/.zhistory
+      args:
+        executable: /usr/bin/bash
+      when: stat_chech_result.stat.exists
+
+    - name: change shell
+      become: yes
+      user:
+        name: "{{ ansible_user }}"
+        shell: /bin/zsh
+
+    - name: install zimfw using its script
+      ignore_errors: yes
+      register: zimfw_output
+      shell: "curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh"
+      args:
+        executable: /usr/bin/zsh
+      changed_when: "'already exists' not in zimfw_output.stderr"
+      failed_when: false
+
+    - name: change theme to steeef
+      ignore_errors: yes
+      shell: "zsh -ic 'echo zmodule bira >> ~/.zimrc && zimfw install'"
+      args:
+        executable: /usr/bin/zsh
+      register: shell_result
+

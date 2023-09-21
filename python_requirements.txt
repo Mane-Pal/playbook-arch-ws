@@ -1,0 +1,13 @@
+pandas
+typer
+pre-commit
+black
+sqlalchemy
+fastapi
+alembic
+selenium
+sqlalchemy-utils
+streamlit
+boto3
+pytest
+plotly

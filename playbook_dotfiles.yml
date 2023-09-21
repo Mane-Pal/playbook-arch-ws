@@ -1,0 +1,13 @@
+- name: playbook_dotfiles.yml - Install Chezmoi for Dotfiles Management
+  hosts: localhost
+
+  tasks:
+    - name: Install Chezmoi and lastpass-cli
+      become: yes
+      pacman:
+        update_cache: yes
+        name:
+          - chezmoi
+          - lastpass-cli
+        state: present
+
