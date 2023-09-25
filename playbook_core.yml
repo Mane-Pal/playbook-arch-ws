@@ -1,18 +1,18 @@
 ---
-- name: playbook_core.yml - archlinux base setup
+- name: Playbook_core.yml - archlinux base setup
   hosts: localhost
-  become: yes
+  become: true
 
   tasks:
 
-    - name: update arch
-      pacman:
-        update_cache: yes
-        upgrade: yes
+    - name: Update arch
+      general.community.pacman:
+        update_cache: true
+        upgrade: true
 
-    - name: install bunch of packages
-      pacman:
-        update_cache: yes
+    - name: Install bunch of packages
+      general.community.pacman:
+        update_cache: true
         name:
           - man-db
           - git
@@ -23,6 +23,7 @@
           - fd
           - fzf
           - bat
+          - ripgrep
           - tree
           - unarchiver
           - duf
@@ -48,13 +49,14 @@
           - python-pexpect
           - sqlite
           - blueman
+          - bluez
           - tlp
 
     - name: Enable and start TLP service
       systemd:
         name: tlp
         state: started
-        enabled: yes
+        enabled: true
 
 
 # YAY TO ACCESS AUR REPOSITORY  ----------------------------------------------
@@ -65,14 +67,14 @@
         state: present
         line: "ALL ALL=NOPASSWD: /usr/bin/pacman"
         validate: /usr/sbin/visudo -cf %s
-        create: yes
+        create: true
 
     - name: git clone yay-bin repo in to /tmp
       become: no
       git:
         repo: 'https://aur.archlinux.org/yay-bin.git'
         dest: /tmp/yay-bin
-        clone: yes
+        clone: true
 
     - name: install yay using makepkg
       become: no
@@ -137,7 +139,7 @@
         state: present
         line: "%wheel ALL=(ALL:ALL) ALL"
         validate: /usr/sbin/visudo -cf %s
-        create: yes
+        create: true
 
 # SSH ------------------------------------------------------------------------
 
@@ -149,7 +151,7 @@
     - name: enable and start ssh service
       systemd:
         name: sshd
-        enabled: yes
+        enabled: true
         state: started
 
 
@@ -163,7 +165,7 @@
     - name: enable and start ~12h updatedb timer
       systemd:
         name: plocate-updatedb.timer
-        enabled: yes
+        enabled: true
         state: started
 
 # CRONIE  --------------------------------------------------------------------
@@ -176,7 +178,7 @@
     - name: enable and start cronie.service
       systemd:
         name: cronie
-        enabled: yes
+        enabled: true
         state: started
 
 # ARCHLINUX-KEYRING WEEKLY UPDATE  -------------------------------------------
@@ -184,7 +186,7 @@
     - name: archlinux-keyring - enable weekly update
       systemd:
         name: archlinux-keyring-wkd-sync.timer
-        enabled: yes
+        enabled: true
         state: started
 
 # SSD TRIM SCHEDULED  --------------------------------------------------------
@@ -197,7 +199,7 @@
     - name: enable and start weekly ssd disks trim using fstrim timer
       systemd:
         name: fstrim.timer
-        enabled: yes
+        enabled: true
         state: started
 
 # TRASH SETUP ----------------------------------------------------------------
@@ -235,7 +237,7 @@
     - name: enable and start trash-empty.timer
       systemd:
         name: trash-empty.timer
-        enabled: yes
+        enabled: true
         state: started
 
 # CACHE CLEANER SCHEDULED  ---------------------------------------------------
@@ -248,7 +250,7 @@
     - name: enable and start weekly cache cleanup paccache timer
       systemd:
         name: paccache.timer
-        enabled: yes
+        enabled: true
         state: started
 
 # REFLECTOR TO REGULARLY UPDATE MIRRORLIST  ---- CHANGE COUNTRY CODES !!! ----
@@ -271,13 +273,13 @@
     - name: enable and start reflector timer
       systemd:
         name: reflector.timer
-        enabled: yes
+        enabled: true
         state: started
 
     - name: do initial run of reflector.service
       systemd:
         name: reflector
-        enabled: yes
+        enabled: true
         state: started
 
 # LOGROTATE  -----------------------------------------------------------------
@@ -296,7 +298,7 @@
     - name: enable and start daily logs rotation, cleanup
       systemd:
         name: logrotate.timer
-        enabled: yes
+        enabled: true
         state: started
 
 # NEOFETCH  ------------------------------------------------------------------

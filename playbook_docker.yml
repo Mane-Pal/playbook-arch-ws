@@ -1,43 +1,58 @@
 ---
-- name: playbook_docker.yml - docker and stuff
+- name: Playbook_docker.yml - docker and stuff
   hosts: localhost
-  become: yes
+  become: true
+  vars_prompt:
+    - name: docker_install_choice
+      prompt: "Do you want to install Docker CLI (1) or Docker Desktop (2)?"
+      private: false
+      default: "1"  # Default to Docker CLI
+
 
   tasks:
-    - name: install docker and docker compose and ctop
-      pacman:
-        update_cache: yes
-        name:
-          - docker
-          - docker-compose
-          - ctop
+    - name: Install docker and docker compose and ctop
+      when: docker_install_choice == "1"
+      block:
+        - name: Install Docker CLI
+          community.general.pacman:
+            update_cache: true
+            name:
+              - docker
+              - docker-compose
+              - ctop
 
-    - name: enable and start docker.service
-      systemd:
-        name: docker
-        enabled: yes
-        state: started
+        - name: Enable and start docker.service
+          ansible.builtin.systemd:
+            name: docker
+            enabled: true
+            state: started
 
-    - name: add the user to docker group
-      user:
-        name: "{{ ansible_user }}"
-        groups: docker
-        append: yes
+        - name: Add the user to docker group
+          ansible.builtin.user:
+            name: "{{ ansible_user }}"
+            groups: docker
+            append: true
 
-    - name: Create /etc/docker directory if it does not exist
-      file:
-        path: /etc/docker
-        state: directory
-        mode: '0755'
+        - name: Create /etc/docker directory if it does not exist
+          ansible.builtin.file:
+            path: /etc/docker
+            state: directory
+            mode: '0755'
 
-    - name: set default max logs size to 250MB and set logs rotation
-      copy:
-        dest: '/etc/docker/daemon.json'
-        content: |
-          {
-            "log-driver": "json-file",
-            "log-opts": {
-              "max-size": "50m",
-              "max-file": "5"
-            }
-          }
+        - name: Set default max logs size to 250MB and set logs rotation
+          ansible.builtin.copy:
+            mode: "0600"
+            dest: '/etc/docker/daemon.json'
+            content: |
+              {
+                "log-driver": "json-file",
+                "log-opts": {
+                  "max-size": "50m",
+                  "max-file": "5"
+                }
+              }
+
+    - name: Echo Docker Desktop URL
+      ansible.builtin.debug:
+        msg: "to install Docker Desktop please visit: https://docs.docker.com/desktop/install/archlinux/"
+      when: docker_install_choice == "2"

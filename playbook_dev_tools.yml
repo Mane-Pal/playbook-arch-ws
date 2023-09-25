@@ -27,16 +27,18 @@
           - neovim
           - pyenv-virtualenv
           - google-chrome
+          - slack-desktop
 
     - name: Install dev tools from pacman
       become: yes
-      pacman:
+      general.community.pacman:
         update_cache: yes
         name:
           - dbeaver
           - wezterm
           - pyenv
           - zellij
+          - chezmoi
 
     - name: Install VS Code extensions
       command: code --install-extension {{ item }}
@@ -51,15 +53,16 @@
       register: result
       failed_when: '"already installed" not in result.stdout and result.rc != 0'
 
+  
     - name: Install Python 3.11
       command: pyenv install 3.11.5
       register: pyenv_install
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: Create virtualenv called dev-env with Python 3.11
       command: pyenv virtualenv 3.11.5 dev-env
       register: pyenv_virtualenv_create
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: Check if PYENV_ROOT is defined in .zshrc
       lineinfile:
