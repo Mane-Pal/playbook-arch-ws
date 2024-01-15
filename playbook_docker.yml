@@ -14,7 +14,7 @@
       when: docker_install_choice == "1"
       block:
         - name: Install Docker CLI
-          community.general.pacman:
+          pacman:
             update_cache: true
             name:
               - docker

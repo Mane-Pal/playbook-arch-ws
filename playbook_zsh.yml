@@ -4,9 +4,9 @@
 
   tasks:
     - name: install base zsh and curl
-      become: yes
+      become: true
       pacman:
-        update_cache: yes
+        update_cache: true 
         name:
           - zsh
           - curl
@@ -24,13 +24,13 @@
       when: stat_chech_result.stat.exists
 
     - name: change shell
-      become: yes
+      become: true 
       user:
         name: "{{ ansible_user }}"
         shell: /bin/zsh
 
     - name: install zimfw using its script
-      ignore_errors: yes
+      ignore_errors: true 
       register: zimfw_output
       shell: "curl -fsSL https://raw.githubusercontent.com/zimfw/install/master/install.zsh | zsh"
       args:
@@ -39,9 +39,8 @@
       failed_when: false
 
     - name: change theme to steeef
-      ignore_errors: yes
+      ignore_errors: true 
       shell: "zsh -ic 'echo zmodule bira >> ~/.zimrc && zimfw install'"
       args:
         executable: /usr/bin/zsh
       register: shell_result
-
