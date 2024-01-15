@@ -6,12 +6,12 @@
   tasks:
 
     - name: Update arch
-      general.community.pacman:
+      pacman:
         update_cache: true
         upgrade: true
 
     - name: Install bunch of packages
-      general.community.pacman:
+      pacman:
         update_cache: true
         name:
           - man-db
@@ -124,8 +124,8 @@
     - name: fstab change relatime to noatime
       replace:
         path: /etc/fstab
-        regexp: 'relatime'
-        replace: 'noatime'
+        regexp: 'noatime'
+        replace: 'relatime'
 
     - name: change number of failed logins that triger 10min lockout
       lineinfile:
@@ -326,3 +326,4 @@
         regexp: '.*# info "Local IP" local_ip$'
         line: '    info "Local IP" local_ip'
 
+  

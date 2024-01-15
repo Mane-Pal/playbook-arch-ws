@@ -1,0 +1,43 @@
+- name: Setup AwesomeWM
+  hosts: localhost
+  tasks:
+    - name: Install awesomewm-git from AUR
+      kewlfft.aur.aur:
+        name: awesomewm-git
+        use: yay
+
+    - name: Install necessary dependencies for Yoru
+      kewlfft.aur.aur:
+        name:
+          - picom-git
+          - wezterm
+          - rofi
+          - acpi
+          - acpid
+          - acpi_call
+          - upower
+          - lxappearance-gtk3
+          - jq
+          - inotify-tools
+          - polkit-gnome
+          - xdotool
+          - xclip
+          - gpick
+          - ffmpeg
+          - blueman
+          - redshift
+          - pipewire
+          - pipewire-alsa
+          - pipewire-pulse
+          - alsa-utils
+          - brightnessctl
+          - feh
+          - maim
+          - mpv
+          - mpd
+          - mpc
+          - mpdris2
+          - python-mutagen
+          - ncmpcpp
+          - playerctl
+        use: yay
